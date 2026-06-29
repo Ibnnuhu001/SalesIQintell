@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Why Customers Look But Never Buy — And Exactly How to Fix It</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Inter:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap');
+
+  :root {
+    --navy: #0A0F1E;
+    --navy-mid: #111827;
+    --navy-card: #151D2E;
+    --gold: #C9A84C;
+    --gold-light: #E8C97A;
+    --gold-dim: #8B6F2E;
+    --cream: #F5F0E8;
+    --muted: #8B93A7;
+    --accent-red: #C0392B;
+    --accent-green: #1A6B4A;
+    --white: #FFFFFF;
+    --border: rgba(201,168,76,0.2);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--navy);
+    color: var(--cream);
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    line-height: 1.75;
+    overflow-x: hidden;
+  }
+
+  /* ── SIDEBAR NAV ── */
+  #sidebar {
+    position: fixed;
+    top: 0; left: 0;
+    width: 260px;
+    height: 100vh;
+    background: var(--navy-card);
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+    z-index: 100;
+    transform: translateX(-260px);
+    transition: transform 0.3s ease;
+    padding: 0 0 40px;
+  }
+  #sidebar.open { transform: translateX(0); }
+
+  .sidebar-logo {
+    padding: 24px 20px;
+    border-bottom: 1px solid var(--border);
+    font-family: 'Playfair Display', serif;
+    font-size: 13px;
+    color: var(--gold);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .nav-section {
+    padding: 16px 20px 4px;
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    color: var(--gold-dim);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+
+  .nav-link {
+    display: block;
+    padding: 9px 20px;
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 400;
+    transition: all 0.2s;
+    border-left: 2px solid transparent;
+  }
+  .nav-link:hover, .nav-link.active {
+    color: var(--gold-light);
+    border-left-color: var(--gold);
+    background: rgba(201,168,76,0.06);
+  }
+
+  /* ── TOGGLE BUTTON ── */
+  #menu-toggle {
+    position: fixed;
+    top: 20px; left: 20px;
+    z-index: 200;
+    background: var(--navy-card);
+    border: 1px solid var(--border);
+    color: var(--gold);
+    width: 42px; height: 42px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    transition: all 0.2s;
+  }
+  #menu-toggle:hover { background: var(--gold); color: var(--navy); }
+
+  /* ── MAIN CONTENT ── */
+  #main {
+    margin-left: 0;
+    transition: margin-left 0.3s ease;
+    min-height: 100vh;
+  }
+  body.sidebar-open #main { margin-left: 260px; }
+
+  /* ── COVER PAGE ── */
+  #cover {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 60px 40px;
+    position: relative;
+    background:
+      radial-gradient(ellipse 60% 40% at 50% 0%, rgba(201,168,76,0.08) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 60% at 80% 100%, rgba(201,168,76,0.05) 0%, transparent 60%),
+      var(--navy);
+  }
+
+  .cover-eyebrow {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 4px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 32px;
+    opacity: 0.8;
+  }
+
+  .cover-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(36px, 6vw, 72px);
+    font-weight: 900;
+    line-height: 1.1;
+    color: var(--white);
+    margin-bottom: 12px;
+  }
+
+  .cover-title span {
+    color: var(--gold);
+    display: block;
+  }
+
+  .cover-subtitle {
+    font-size: 16px;
+    color: var(--muted);
+    max-width: 540px;
+    margin: 20px auto 48px;
+    font-weight: 300;
+    line-height: 1.7;
+  }
+
+  .cover-divider {
+    width: 60px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 0 auto 48px;
+  }
+
+  .cover-stats {
+    display: flex;
+    gap: 48px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 56px;
+  }
+
+  .stat {
+    text-align: center;
+  }
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--gold);
+    line-height: 1;
+  }
+  .stat-label {
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-top: 6px;
+  }
+
+  .start-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--gold);
+    color: var(--navy);
+    padding: 14px 32px;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: 1px;
+    text-decoration: none;
+    text-transform: uppercase;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+  }
+  .start-btn:hover { background: var(--gold-light); transform: translateY(-1px); }
+
+  .cover-author {
+    margin-top: 56px;
+    font-size: 12px;
+    color: var(--gold-dim);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  /* ── CHAPTER SECTIONS ── */
+  .chapter {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 80px 40px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .chapter-number {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 4px;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .chapter-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(24px, 4vw, 38px);
+    font-weight: 700;
+    color: var(--white);
+    line-height: 1.2;
+    margin-bottom: 24px;
+  }
+
+  .chapter-intro {
+    font-size: 17px;
+    color: var(--gold-light);
+    font-style: italic;
+    border-left: 3px solid var(--gold);
+    padding-left: 20px;
+    margin-bottom: 36px;
+    line-height: 1.6;
+  }
+
+  p {
+    color: #C8D0DC;
+    margin-bottom: 20px;
+    font-size: 15.5px;
+  }
+
+  h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    color: var(--gold-light);
+    margin: 36px 0 16px;
+    font-weight: 700;
+  }
+
+  h4 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--cream);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin: 28px 0 12px;
+  }
+
+  /* ── PULL QUOTE ── */
+  .pull-quote {
+    background: var(--navy-card);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--gold);
+    padding: 28px 32px;
+    margin: 36px 0;
+    border-radius: 0 6px 6px 0;
+  }
+  .pull-quote p {
+    font-family: 'Playfair Display', serif;
+    font-size: 19px;
+    color: var(--cream);
+    font-style: italic;
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  /* ── TACTIC CARDS ── */
+  .tactic-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    margin: 32px 0;
+  }
+
+  .tactic-card {
+    background: var(--navy-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px;
+    transition: border-color 0.2s;
+  }
+  .tactic-card:hover { border-color: var(--gold); }
+
+  .tactic-icon {
+    font-size: 24px;
+    margin-bottom: 12px;
+  }
+
+  .tactic-card h4 {
+    text-transform: none;
+    font-size: 15px;
+    letter-spacing: 0;
+    margin: 0 0 10px;
+    color: var(--gold-light);
+  }
+
+  .tactic-card p {
+    font-size: 13.5px;
+    margin: 0;
+    color: var(--muted);
+  }
+
+  /* ── FRAMEWORK BOX ── */
+  .framework {
+    background: linear-gradient(135deg, rgba(201,168,76,0.08), rgba(201,168,76,0.02));
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 32px;
+    margin: 32px 0;
+  }
+
+  .framework-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .framework-steps {
+    list-style: none;
+    counter-reset: steps;
+  }
+
+  .framework-steps li {
+    counter-increment: steps;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(201,168,76,0.1);
+  }
+  .framework-steps li:last-child { border-bottom: none; }
+
+  .step-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--gold);
+    min-width: 32px;
+    line-height: 1;
+    padding-top: 3px;
+  }
+
+  .step-content strong {
+    display: block;
+    color: var(--cream);
+    font-size: 14px;
+    margin-bottom: 4px;
+  }
+  .step-content span {
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  /* ── WARNING / TIP BOXES ── */
+  .insight-box {
+    display: flex;
+    gap: 16px;
+    padding: 20px 24px;
+    border-radius: 6px;
+    margin: 28px 0;
+  }
+  .insight-box.tip {
+    background: rgba(26,107,74,0.12);
+    border: 1px solid rgba(26,107,74,0.3);
+  }
+  .insight-box.warning {
+    background: rgba(192,57,43,0.1);
+    border: 1px solid rgba(192,57,43,0.3);
+  }
+  .insight-box.gold {
+    background: rgba(201,168,76,0.08);
+    border: 1px solid var(--border);
+  }
+
+  .insight-icon { font-size: 20px; flex-shrink: 0; padding-top: 2px; }
+  .insight-box p { margin: 0; font-size: 14px; color: #B8C0CC; }
+  .insight-box strong { color: var(--cream); }
+
+  /* ── CHECKLIST ── */
+  .checklist { list-style: none; margin: 20px 0; }
+  .checklist li {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    font-size: 14.5px;
+    color: #B8C0CC;
+    cursor: pointer;
+  }
+  .checklist li:last-child { border-bottom: none; }
+  .check-box {
+    width: 18px; height: 18px;
+    border: 1.5px solid var(--gold-dim);
+    border-radius: 3px;
+    flex-shrink: 0;
+    margin-top: 3px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+    font-size: 11px;
+  }
+  .checklist li.done .check-box {
+    background: var(--gold);
+    border-color: var(--gold);
+    color: var(--navy);
+  }
+  .checklist li.done span { text-decoration: line-through; color: var(--muted); }
+
+  /* ── TABLE ── */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 28px 0;
+    font-size: 13.5px;
+  }
+  .data-table th {
+    background: rgba(201,168,76,0.12);
+    color: var(--gold-light);
+    padding: 12px 16px;
+    text-align: left;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--border);
+  }
+  .data-table td {
+    padding: 12px 16px;
+    color: #B8C0CC;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .data-table tr:hover td { background: rgba(201,168,76,0.03); }
+
+  /* ── PROGRESS BAR ── */
+  #progress-bar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--gold), var(--gold-light));
+    width: 0%;
+    z-index: 300;
+    transition: width 0.1s;
+  }
+
+  /* ── FOOTER ── */
+  #footer {
+    text-align: center;
+    padding: 60px 40px;
+    border-top: 1px solid var(--border);
+    background: var(--navy-card);
+  }
+  .footer-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+  .footer-tagline {
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+  .footer-copy {
+    margin-top: 24px;
+    font-size: 11px;
+    color: var(--gold-dim);
+  }
+
+  /* ── MOBILE ── */
+  @media (max-width: 640px) {
+    .chapter { padding: 56px 24px; }
+    .cover-stats { gap: 28px; }
+    #cover { padding: 80px 24px 60px; }
+    body.sidebar-open #main { margin-left: 0; }
+  }
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+
+<!-- MENU TOGGLE -->
+<button id="menu-toggle" onclick="toggleSidebar()" aria-label="Toggle menu">☰</button>
+
+<!-- SIDEBAR -->
+<nav id="sidebar">
+  <div class="sidebar-logo">Why Customers<br>Look But Never Buy</div>
+  <div class="nav-section">Front Matter</div>
+  <a class="nav-link" href="#cover">Cover</a>
+  <a class="nav-link" href="#introduction">Introduction</a>
+  <div class="nav-section">Part I — Strategy</div>
+  <a class="nav-link" href="#ch1">1. The Buyer's Mind</a>
+  <a class="nav-link" href="#ch2">2. Market Intelligence</a>
+  <a class="nav-link" href="#ch3">3. Positioning That Wins</a>
+  <div class="nav-section">Part II — Sales</div>
+  <a class="nav-link" href="#ch4">4. The Trust Architecture</a>
+  <a class="nav-link" href="#ch5">5. Closing Without Pressure</a>
+  <a class="nav-link" href="#ch6">6. Follow-Up That Converts</a>
+  <div class="nav-section">Part III — Marketing</div>
+  <a class="nav-link" href="#ch7">7. The Attention Economy</a>
+  <a class="nav-link" href="#ch8">8. Content That Sells</a>
+  <a class="nav-link" href="#ch9">9. Digital Funnels</a>
+  <div class="nav-section">Part IV — Revenue</div>
+  <a class="nav-link" href="#ch10">10. Pricing Psychology</a>
+  <a class="nav-link" href="#ch11">11. Referral Intelligence</a>
+  <a class="nav-link" href="#ch12">12. The 90-Day Plan</a>
+  <div class="nav-section">Back Matter</div>
+  <a class="nav-link" href="#conclusion">Conclusion</a>
+</nav>
+
+<!-- MAIN -->
+<div id="main">
+
+<!-- ══════════ COVER ══════════ -->
+<section id="cover">
+  <div class="cover-eyebrow">Sales &amp; Marketing Intelligence · Practical Playbook</div>
+  <h1 class="cover-title">
+    Why Customers Look<br>
+    <span>But Never Buy</span>
+  </h1>
+  <p style="font-family:'Playfair Display',serif;font-size:clamp(14px,2vw,18px);color:var(--gold-light);margin-bottom:0;font-style:italic;">And Exactly How to Fix It</p>
+  <div class="cover-divider"></div>
+  <p class="cover-subtitle">
+    The strategies, systems, and psychology your competitors don't want you to know — packaged into a practical playbook that works for any business, anywhere in the world.
+  </p>
+  <div class="cover-stats">
+    <div class="stat">
+      <div class="stat-num">12</div>
+      <div class="stat-label">Chapters</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">40+</div>
+      <div class="stat-label">Tactics</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">3</div>
+      <div class="stat-label">Frameworks</div>
+    </div>
+  </div>
+  <button class="start-btn" onclick="document.getElementById('introduction').scrollIntoView({behavior:'smooth'})">
+    Begin Reading →
+  </button>
+  <div class="cover-author">By Mustapha Nuhu</div>
+</section>
+
+<!-- ══════════ INTRODUCTION ══════════ -->
+<section class="chapter" id="introduction">
+  <div class="chapter-number">Introduction</div>
+  <h2 class="chapter-title">Why Most Businesses Lose Money Before Noon</h2>
+  <div class="chapter-intro">
+    "The biggest problem in business is not lack of customers. It is lack of a system to attract, convert, and retain them."
+  </div>
+  <p>Every day, millions of businesses open their doors — physical or digital — without a plan. They wake up hoping customers will come. They post content hoping someone will buy. They drop prices hoping that will help. It doesn't.</p>
+  <p>This eBook was written for one reason: to give you the edge that separates businesses that grow from businesses that survive. That edge is not a secret. It is intelligence — applied knowledge about how buyers think, how markets move, and how revenue is really built.</p>
+  <p>Why Customers Look But Never Buy is a practical playbook for business owners, entrepreneurs, sales professionals, and marketing teams who are ready to stop guessing and start growing.</p>
+  <div class="insight-box gold">
+    <div class="insight-icon">💡</div>
+    <p><strong>How to use this book:</strong> Each chapter ends with an action step. Do not move to the next chapter until you have applied the action. Insight without action is entertainment. This book is not entertainment — it is a tool.</p>
+  </div>
+  <p>Whether you sell products or services, whether your market is local or global, the principles in this book apply. Business is built on human behaviour. And human behaviour does not change.</p>
+  <p>Let us begin.</p>
+</section>
+
+<!-- ══════════ CHAPTER 1 ══════════ -->
+<section class="chapter" id="ch1">
+  <div class="chapter-number">Chapter 01 · Part I: Strategy</div>
+  <h2 class="chapter-title">The Buyer's Mind: What Really Drives a Purchase</h2>
+  <div class="chapter-intro">
+    Before you can sell anything, you need to understand one thing: people do not buy products. They buy feelings, outcomes, and the relief of a problem being solved.
+  </div>
+  <p>Every purchase decision — from buying a cup of tea to signing a six-figure contract — is emotional first and logical second. The logic comes after the feeling to justify what the heart already decided.</p>
+  <p>This is not manipulation. This is the truth about how humans are built. Your job as a business owner or salesperson is to understand this and design your messaging accordingly.</p>
+
+  <h3>The 5 Core Buying Triggers</h3>
+  <div class="tactic-grid">
+    <div class="tactic-card">
+      <div class="tactic-icon">😰</div>
+      <h4>Pain Avoidance</h4>
+      <p>Buyers move faster to escape a problem than to gain a benefit. Show them what it costs to stay where they are.</p>
+    </div>
+    <div class="tactic-card">
+      <div class="tactic-icon">🏆</div>
+      <h4>Status & Identity</h4>
+      <p>People buy to become the person they want to be seen as. Sell the identity, not just the product.</p>
+    </div>
+    <div class="tactic-card">
+      <div class="tactic-icon">🔐</div>
+      <h4>Safety & Trust</h4>
+      <p>No trust, no sale. Buyers need to feel safe before they open their wallets. Evidence removes fear.</p>
+    </div>
+    <div class="tactic-card">
+      <div class="tactic-icon">⏱️</div>
+      <h4>Urgency & Scarcity</h4>
+      <p>People procrastinate by default. A real deadline or limited supply creates genuine pressure to act now.</p>
+    </div>
+    <div class="tactic-card">
+      <div class="tactic-icon">🤝</div>
+      <h4>Social Proof</h4>
+      <p>When others have done it and it worked, the risk in the buyer's mind drops. Show results, not promises.</p>
+    </div>
+    <div class="tactic-card">
+      <div class="tactic-icon">🎯</div>
+      <h4>Specific Outcome</h4>
+      <p>Vague benefits don't sell. "Lose 5kg in 6 weeks" converts better than "get fit." Be precise.</p>
+    </div>
+  </div>
+
+  <div class="pull-quote">
+    <p>"The customer is not paying for your product. They are paying for the version of their life your product creates."</p>
+  </div>
+
+  <h3>The Decision Loop</h3>
+  <p>Every buyer goes through a predictable sequence before saying yes. Understanding this loop lets you meet them at the right point with the right message.</p>
+
+  <div class="framework">
+    <div class="framework-title">The Buyer Decision Loop</div>
+    <ol class="framework-steps">
+      <li><div class="step-num">1</div><div class="step-content"><strong>Awareness of Problem</strong><span>They realise something is not working. Your content should live here.</span></div></li>
+      <li><div class="step-num">2</div><div class="step-content"><strong>Search for Solution</strong><span>They look for answers. Your positioning should make you visible and relevant.</span></div></li>
+      <li><div class="step-num">3</div><div class="step-content"><strong>Evaluation of Options</strong><span>They compare. Your differentiation must be clear and compelling here.</span></div></li>
+      <li><div class="step-num">4</div><div class="step-content"><strong>Trust Verification</strong><span>They check if you are credible. Reviews, results, and guarantees work here.</span></div></li>
+      <li><div class="step-num">5</div><div class="step-content"><strong>Purchase Decision</strong><span>They buy — or they don't. Your offer clarity and call to action seal this moment.</span></div></li>
+    </ol>
+  </div>
+
+  <div class="insight-box tip">
+    <div class="insight-icon">✅</div>
+    <p><strong>Action Step:</strong> Write down the top 3 problems your customers face before they find you. Then rewrite your offer to speak directly to those problems — not to your product's features.</p>
+  </div>
+</section>
+
+<!-- ══════════ CHAPTER 2 ══════════ -->
+<section class="chapter" id="ch2">
+  <div class="chapter-number">Chapter 02 · Part I: Strategy</div>
+  <h2 class="chapter-title">Market Intelligence: Knowing More Than Your Competition</h2>
+  <div class="chapter-intro">
+    The business that knows its market best will always outperform the business that only knows its product.
+  </div>
+  <p>Market intelligence is simply this: knowing what your customers want, what your competitors are doing, and where the gaps are — before anyone else does.</p>
+  <p>Most businesses skip this step. They build products they think people want, then wonder why nobody buys. The businesses that grow fast are obsessive about listening before they speak.</p>
+
+  <h3>4 Intelligence Sources You Should Tap Every Week</h3>
+
+  <table class="data-table">
+    <thead>
+      <tr><th>Source</th><th>What to Look For</th><th>How Often</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Customer Reviews (yours & competitors')</td><td>Exact words people use, repeated complaints, unmet desires</td><td>Weekly</td></tr>
+      <tr><td>Social Media Comments</td><td>Questions, frustrations, celebrations in your niche</td><td>Daily</td></tr>
+      <tr><td>Sales Conversations</td><td>Objections, hesitations, the questions asked before buying</td><td>After every call</td></tr>
+      <tr><td>Search Trends (Google, TikTok, YouTube)</td><td>What people are actively searching for in your space</td><td>Monthly</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Competitor Mapping</h3>
+  <p>You do not need to obsess over competitors — but you need to understand them. Specifically, you need to find the gap: what they are not offering, what complaints their customers have, and where they are slow to respond.</p>
+
+  <div class="insight-box gold">
+    <div class="insight-icon">🔍</div>
+    <p><strong>The Gap Method:</strong> Search your main competitor's name followed by "review" or "complaint" online. Read the negative feedback. Those are your opportunities. Build your offer around fixing exactly what they are failing at.</p>
+  </div>
+
+  <div class="insight-box tip">
+    <div class="insight-icon">✅</div>
+    <p><strong>Action Step:</strong> Spend 30 minutes reading reviews and comments in your market this week. Write down the exact phrases customers use to describe their problems. Use those same words in your next piece of marketing copy.</p>
+  </div>
+</section>
+
+<!-- ══════════ CHAPTER 3 ══════════ -->
+<section class="chapter" id="ch3">
+  <div class="chapter-number">Chapter 03 · Part I: Strategy</div>
+  <h2 class="chapter-title">Positioning That Wins: How to Own a Space in Your Buyer's Mind</h2>
+  <div class="chapter-intro">
+    When a buyer thinks of your category, do they think of you? If not, your positioning is broken — and that is a revenue problem, not a marketing problem.
+  </div>
+  <p>Positioning is not a tagline. It is the mental territory you occupy in the mind of your ideal customer. The most successful brands — locally and globally — own a very specific position.</p>
+  <p>Volvo owns "safety." Apple owns "simplicity." For your local bakery, you might own "the freshest bread on the street." For your consulting firm, you might own "the fastest results in the industry." The specific position does not matter as much as the fact that you occupy one.</p>
+
+  <h3>The Positioning Statement Formula</h3>
+  <div class="framework">
+    <div class="framework-title">Build Your Positioning Statement</div>
+    <ol class="framework-steps">
+      <li><div class="step-num">1</div><div class="step-content"><strong>For [Your Target Customer]</strong><span>Define exactly who this is. Be specific. "Everyone" is nobody.</span></div></li>
+      <li><div class="step-num">2</div><div class="step-content"><strong>Who struggle with [Specific Problem]</strong><span>Name the exact pain. Specificity creates recognition.</span></div></li>
+      <li><div class="step-num">3</div><div class="step-content"><strong>[Your Business] provides [Specific Solution]</strong><span>State what you do clearly — not creatively, but clearly.</span></div></li>
+      <li><div class="step-num">4</div><div class="step-content"><strong>Unlike [Alternative], we [Key Differentiator]</strong><span>Why you over the alternative? Answer this without hesitation.</span></div></li>
+    </ol>
+  </div>
+
+  <div class="insight-box warning">
+    <div class="insight-icon">⚠️</div>
+    <p><strong>Positioning Mistake:</strong> Trying to appeal to everyone. The more specific your positioning, the stronger your pull on the right customer — and the easier it is to charge premium prices.</p>
+  </div>
+
+  <div class="insight-box tip">
+    <div class="insight-icon">✅</div>
+    <p><strong>Action Step:</strong> Write your positioning statement using the formula above. Then test it — share it with 5 people in your target audience and ask: "Does this describe you?" Their response will tell you everything.</p>
+  </div>
+</section>
+
+<!-- ══════════ CHAPTER 4 ══════════ -->
+<section class="chapter" id="ch4">
+  <div class="chapter-number">Chapter 04 · Part II: Sales</div>
+  <h2 class="chapter-title">The Trust Architecture: Building Credibility That Converts</h2>
+  <div class="chapter-intro">
+    People do not buy from businesses. They buy from people — and entities — they trust. Trust is not a feeling. It is a system you build deliberately.
+  </div>
+  <p>Trust has a structure. It is not random. When a potential customer encounters your brand for the first time, they are running an unconscious trust audit. They are asking questions they may not even articulate:</p>
+  <p><em>Is this real? Has this worked for others? What happens if it doesn't work for me? Can I verify any of this?</em></p>
+  <p>Your job is to answer those questions before they are asked.</p>
+
+  <h3>The Trust Stack</h3>
+  <div class="tactic-grid">
+    <div class="tactic-card">
+      <div class="tactic-icon">📋</div>
+      <h4>Proof of Results</h4>
+      <p>Case studies, before/after outcomes, and numbers. Not testimonials saying "great product" — outcomes showing real results.</p>
+    </div>
+    <div class="tactic-card">
+      <div class="tactic-icon">👤</div>
+      <h4>Personal Authority</h4>
+      <p>Your story, credentials, and experience. People buy from people they believe know what they are talking about.</p>
+    </div>
+    <div class="tactic-card">
+      <div class="tactic-icon">🛡️</div>
+      <h4>Risk Reversal</h4>
+      <p>Guarantees, free trials, and return policies. The more risk you absorb, the lower the barrier to buy becomes.</p>
+    </div>
+    <div class="tactic-card">
+      <div class="tactic-icon">🌐</div>
+      <h4>Consistent Presence</h4>
+      <p>Being visible and consistent over time builds credibility even before a conversation starts.</p>
+    </div>
+  </div>
+
+  <div class="insight-box tip">
+    <div class="insight-icon">✅</div>
+    <p><strong>Action Step:</strong> Audit your trust stack today. Do you have visible proof of results? Is your authority clearly communicated? Do you offer a risk reversal? Fix the weakest link first.</p>
+  </div>
+</section>
+
+<!-- ══════════ CHAPTER 5 ══════════ -->
+<section class="chapter" id="ch5">
+  <div class="chapter-number">Chapter 05 · Part II: Sales</div>
+  <h2 class="chapter-title">Closing Without Pressure: The Art of the Natural Yes</h2>
+  <div class="chapter-intro">
+    Closing is not a technique you use at the end of a sales conversation. It is the natural result of everything that came before it being done correctly.
+  </div>
+  <p>The reason most salespeople feel pressure when closing is because they skipped steps earlier. The trust was not built. The problem was not fully understood. The solution was not clearly connected to the buyer's specific situation.</p>
+  <p>When you do the work upfront, closing becomes a question — not a push.</p>
+
+  <h3>The SOLVE Sales Conversation Framework</h3>
+  <div class="framework">
+    <div class="framework-title">SOLVE — A Natural Sales Conversation</div>
+    <ol class="framework-steps">
+      <li><div class="step-num">S</div><div class="step-content"><strong>Situation</strong><span>Understand where the buyer is right now. Ask, listen, and reflect.</span></div></li>
+      <li><div class="step-num">O</div><div class="step-content"><strong>Outcome</strong><span>Discover where they want to be. What does success look like for them?</span></div></li>
+      <li><div class="step-num">L</div><div class="step-content"><strong>Loss</strong><span>Help them see the cost of staying where they are. Not manipulation — clarity.</span></div></li>
+      <li><div class="step-num">V</div><div class="step-content"><strong>Value</strong><span>Show how your solution specifically bridges their gap. Be precise.</span></div></li>
+      <li><div class="step-num">E</div><div class="step-content"><strong>Easy Next Step</strong><span>Give them one clear, low-friction action to take right now.</span></div></li>
+    </ol>
+  </div>
+
+  <h3>Handling Objections as Information</h3>
+  <p>An objection is not a rejection. It is a request for more information. Every objection means the buyer is still engaged — they just have an unanswered question.</p>
+
+  <table class="data-table">
+    <thead>
+      <tr><th>Objection</th><th>What It Really Means</th><th>Response Strategy</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>"It's too expensive"</td><td>I don't yet see the value clearly</td><td>Reframe around cost of not acting</td></tr>
+      <tr><td>"I need to think about it"</td><td>I'm not sure yet / I need to talk to someone</td><td>Uncover the real hesitation gently</td></tr>
+      <tr><td>"I'll do it later"</td><td>There's no urgency in my mind yet</td><td>Introduce a real consequence of delay</td></tr>
+      <tr><td>"I've tried similar things before"</td><td>I've been disappointed before</td><td>Acknowledge, then show what is different</td></tr>
+    </tbody>
+  </table>
+
+  <div class="insight-box tip">
+    <div class="insight-icon">✅</div>
+    <p><strong>Action Step:</strong> Write down the 3 most common objections you hear. For each one, write a calm, non-pushy response that addresses the real concern underneath it.</p>
+  </div>
+</section>
+
+<!-- ══════════ CHAPTER 6 ══════════ -->
+<section class="chapter" id="ch6">
+  <div class="chapter-number">Chapter 06 · Part II: Sales</div>
+  <h2 class="chapter-title">Follow-Up That Converts: The Fortune Is in the Sequence</h2>
+  <div class="chapter-intro">
+    Studies consistently show that most sales happen after the fifth contact. Most salespeople give up after the first or second. This is where the money is hiding.
+  </div>
+  <p>Follow-up is not pestering. Done correctly, it is service. You are reminding a potential customer of a solution to a problem they already told you they have. That is valuable — not annoying.</p>
+
+  <h3>The 7-Touch Follow-Up Sequence</h3>
+
+  <div class="framework">
+    <div class="framework-title">Follow-Up Sequence — After First Contact</div>
+    <ol class="framework-steps">
+      <li><div class="step-num">1</div><div class="step-content"><strong>Day 1 — Thank & Recap</strong><span>Summarise the conversation. Show you listened.</span></div></li>
+      <li><div class="step-num">2</div><div class="step-content"><strong>Day 3 — Provide Value</strong><span>Send something useful — a tip, article, or insight relevant to their problem.</span></div></li>
+      <li><div class="step-num">3</div><div class="step-content"><strong>Day 5 — Social Proof</strong><span>Share a relevant result or story from another customer.</span></div></li>
+      <li><div class="step-num">4</div><div class="step-content"><strong>Day 8 — Address Objection</strong><span>Answer the most common hesitation without being asked.</span></div></li>
+      <li><div class="step-num">5</div><div class="step-content"><strong>Day 12 — Urgency</strong><span>Introduce a genuine reason to act soon (deadline, price change, limited availability).</span></div></li>
+      <li><div class="step-num">6</div><div class="step-content"><strong>Day 16 — Last Call</strong><span>Honest, direct: "I want to make sure this is the right time for you. Are you still interested?"</span></div></li>
+      <li><div class="step-num">7</div><div class="step-content"><strong>Day 30 — Long Game</strong><span>Check in again. Circumstances change. A "no" today is often a "yes" in 30 days.</span></div></li>
+    </ol>
+  </div>
+
+  <div class="insight-box tip">
+    <div class="insight-icon">✅</div>
+    <p><strong>Action Step:</strong> Build a simple follow-up sequence for your business using the 7-touch structure. Pre-write the messages. Then run every new prospect through it consistently.</p>
+  </div>
+</section>
+
+<!-- ══════════ CHAPTER 7 ══════════ -->
+<section class="chapter" id="ch7">
+  <div class="chapter-number">Chapter 07 · Part III: Marketing</div>
+  <h2 class="chapter-title">The Attention Economy: How to Win in a World Full of Noise</h2>
+  <div class="chapter-intro">
+    You are not competing against your direct competitors for sales. You are competing against everything for attention — Netflix, WhatsApp, news alerts, social media. Win attention first, then earn the sale.
+  </div>
+  <p>Attention is the currency of the modern market. You can have the best product in the world, but if nobody notices it, the business fails. Understanding how attention works — and how to earn it — is one of the most valuable skills in business today.</p>
+
+  <h3>The 3-Second Test</h3>
+  <p>In any feed — social media, inbox, search results — you have approximately 3 seconds to stop a scroll and earn more attention. Your headline, image, or opening line must do one of three things in that window:</p>
+
+  <div class="tactic-grid">
+    <div class="tactic-card">
+      <div class="tactic-icon">🔥</div>
+      <h4>Trigger Curiosity</h4>
+      <p>Leave a gap in the reader's mind that they need to fill. "The mistake 90% of business owners make on their first sale call..."</p>
+    </div>
+    <div class="tactic-card">
+      <div class="tactic-icon">🎯</div>
+      <h4>Promise a Specific Outcome</h4>
+      <p>"How to double your close rate in 14 days without cold calling" — specific, believable, desirable.</p>
+    </div>
+    <div class="tactic-card">
+      <div class="tactic-icon">😯</div>
+      <h4>Provoke a Reaction</h4>
+      <p>Say something counterintuitive or slightly controversial. "Stop discounting your prices. Here's what to do instead."</p>
+    </div>
+  </div>
+
+  <div class="pull-quote">
+    <p>"Nobody owes you their attention. You have to earn it — every single time — with content that is relevant, valuable, or surprising."</p>
+  </div>
+
+  <div class="insight-box tip">
+    <div class="insight-icon">✅</div>
+    <p><strong>Action Step:</strong> Test 3 different opening lines for your next piece of content or ad. One curiosity hook, one specific promise, one counterintuitive statement. Track which one gets the most engagement.</p>
+  </div>
+</section>
+
+<!-- ══════════ CHAPTER 8 ══════════ -->
+<section class="chapter" id="ch8">
+  <div class="chapter-number">Chapter 08 · Part III: Marketing</div>
+  <h2 class="chapter-title">Content That Sells: Moving People from Interest to Action</h2>
+  <div class="chapter-intro">
+    Good content entertains. Great content sells. The difference is intent and structure — knowing exactly what you want the reader to feel, think, and do.
+  </div>
+  <p>Content marketing is not about posting for the sake of posting. Every piece of content should serve a business purpose: build awareness, build trust, or move someone closer to buying.</p>
+
+  <h3>The Content Mix That Builds Business</h3>
+
+  <table class="data-table">
+    <thead>
+      <tr><th>Content Type</th><th>Purpose</th><th>Target %</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Education / Insight</td><td>Build authority and trust</td><td>50%</td></tr>
+      <tr><td>Proof / Results</td><td>Reduce buyer risk</td><td>20%</td></tr>
+      <tr><td>Behind the Scenes</td><td>Build human connection</td><td>15%</td></tr>
+      <tr><td>Direct Offer</td><td>Drive sales</td><td>15%</td></tr>
+    </tbody>
+  </table>
+
+  <h3>The AIDA Content Structure</h3>
+  <div class="framework">
+    <div class="framework-title">AIDA — Classic Persuasion Architecture</div>
+    <ol class="framework-steps">
+      <li><div class="step-num">A</div><div class="step-content"><strong>Attention</strong><span>Stop the scroll. Start with impact — a bold statement, a question, a surprising fact.</span></div></li>
+      <li><div class="step-num">I</div><div class="step-content"><strong>Interest</strong><span>Keep them reading. Connect to their situation. Make it feel personal and relevant.</span></div></li>
+      <li><div class="step-num">D</div><div class="step-content"><strong>Desire</strong><span>Paint the outcome they want. Make them feel the benefit before they have it.</span></div></li>
+      <li><div class="step-num">A</div><div class="step-content"><strong>Action</strong><span>Tell them exactly what to do next. One clear call to action. Not three — one.</span></div></li>
+    </ol>
+  </div>
+
+  <div class="insight-box tip">
+    <div class="insight-icon">✅</div>
+    <p><strong>Action Step:</strong> Audit your last 10 posts or messages. What percentage were educational? What percentage asked for a sale? Adjust your mix to match the 50/20/15/15 model and track what changes.</p>
+  </div>
+</section>
+
+<!-- ══════════ CHAPTER 9 ══════════ -->
+<section class="chapter" id="ch9">
+  <div class="chapter-number">Chapter 09 · Part III: Marketing</div>
+  <h2 class="chapter-title">Digital Funnels: Turning Strangers into Paying Customers</h2>
+  <div class="chapter-intro">
+    A funnel is not technology. It is a journey. It is the deliberate path you build for a stranger to walk from "I've never heard of you" to "take my money."
+  </div>
+  <p>Many businesses try to sell to cold audiences immediately. This almost never works. Customers need to be warmed. A digital funnel is your warming system.</p>
+
+  <h3>The Simple 4-Stage Funnel</h3>
+  <div class="framework">
+    <div class="framework-title">The Revenue Funnel</div>
+    <ol class="framework-steps">
+      <li><div class="step-num">1</div><div class="step-content"><strong>Awareness — Top of Funnel</strong><span>Content, ads, and social media that reach people who don't know you yet. Goal: visibility.</span></div></li>
+      <li><div class="step-num">2</div><div class="step-content"><strong>Interest — Middle of Funnel</strong><span>Lead magnets, free value, email sequences. Goal: capture contact details and build trust.</span></div></li>
+      <li><div class="step-num">3</div><div class="step-content"><strong>Decision — Lower Funnel</strong><span>Testimonials, case studies, offers, demos. Goal: remove doubt and make buying feel safe.</span></div></li>
+      <li><div class="step-num">4</div><div class="step-content"><strong>Action — Conversion</strong><span>Clear, frictionless purchase process. Goal: make it easy to say yes right now.</span></div></li>
+    </ol>
+  </div>
+
+  <div class="insight-box gold">
+    <div class="insight-icon">💡</div>
+    <p><strong>The Funnel Truth:</strong> Most businesses only have stage 1 and stage 4. They put out content and then ask for a sale. The money is in building stages 2 and 3 — the trust-building middle that most businesses skip entirely.</p>
+  </div>
+
+  <div class="insight-box tip">
+    <div class="insight-icon">✅</div>
+    <p><strong>Action Step:</strong> Draw your current customer journey. Where does someone first find you? What happens next? Where do they drop off? Identify the biggest leak in your funnel and plug it first.</p>
+  </div>
+</section>
+
+<!-- ══════════ CHAPTER 10 ══════════ -->
+<section class="chapter" id="ch10">
+  <div class="chapter-number">Chapter 10 · Part IV: Revenue</div>
+  <h2 class="chapter-title">Pricing Psychology: How to Charge More and Sell More</h2>
+  <div class="chapter-intro">
+    Your price is not just a number. It is a message. It tells buyers how valuable your product is before they experience it.
+  </div>
+  <p>Many businesses price based on cost — how much it costs them to deliver, plus a margin. This is the least effective way to price. It leaves significant money on the table and positions you as a commodity.</p>
+  <p>The most effective pricing is based on value — what the outcome is worth to the buyer, not what it costs you to deliver it.</p>
+
+  <h3>5 Pricing Principles That Increase Revenue</h3>
+  <div class="tactic-grid">
+    <div class="tactic-card">
+      <div class="tactic-icon">🔢</div>
+      <h4>Anchor High</h4>
+      <p>Present a premium option first. Everything that follows looks more reasonable by comparison. This is anchoring — and it works.</p>
+    </div>
+    <div class="tactic-card">
+      <div class="tactic-icon">🎁</div>
+      <h4>Bundle for Perceived Value</h4>
+      <p>Group related products together. The perceived value of a bundle exceeds the sum of its parts in the buyer's mind.</p>
+    </div>
+    <div class="tactic-card">
+      <div class="tactic-icon">📦</div>
+      <h4>Create Tiers</h4>
+      <p>Give buyers 3 options — Basic, Standard, and Premium. Most buyers choose the middle. Price accordingly.</p>
+    </div>
+    <div class="tactic-card">
+      <div class="tactic-icon">💳</div>
+      <h4>Reduce Payment Friction</h4>
+      <p>Offer payment plans. Breaking a large number into smaller instalments dramatically increases conversions.</p>
+    </div>
+    <div class="tactic-card">
+      <div class="tactic-icon">🏷️</div>
+      <h4>Name Your Price</h4>
+      <p>Naming your price rather than asking what the buyer will pay signals confidence and increases perceived authority.</p>
+    </div>
+    <div class="tactic-card">
+      <div class="tactic-icon">⚖️</div>
+      <h4>Frame Against the Cost of Inaction</h4>
+      <p>₦50,000 seems expensive until you compare it to the ₦200,000 per month the problem is costing them.</p>
+    </div>
+  </div>
+
+  <div class="insight-box warning">
+    <div class="insight-icon">⚠️</div>
+    <p><strong>The Race to the Bottom:</strong> Competing on low price destroys your margin, attracts your worst customers, and positions you as a commodity. If price is your only differentiator, you have no business strategy — only a discount policy.</p>
+  </div>
+
+  <div class="insight-box tip">
+    <div class="insight-icon">✅</div>
+    <p><strong>Action Step:</strong> Test raising your price by 15–20% on your next 5 sales. Track conversion rate carefully. You may find the same conversion rate at a higher price — which means you have been undercharging.</p>
+  </div>
+</section>
+
+<!-- ══════════ CHAPTER 11 ══════════ -->
+<section class="chapter" id="ch11">
+  <div class="chapter-number">Chapter 11 · Part IV: Revenue</div>
+  <h2 class="chapter-title">Referral Intelligence: Building a Customer Machine That Sells for You</h2>
+  <div class="chapter-intro">
+    The most cost-effective sales channel in any business is a happy customer with a mouth. Word of mouth is still the most trusted form of marketing on earth.
+  </div>
+  <p>A referral from a trusted friend carries more weight than any advertisement. But most businesses leave referrals to chance. They hope satisfied customers will mention them. Hope is not a strategy.</p>
+  <p>Referral intelligence is about creating a deliberate system that turns your existing customers into active advocates who bring new customers consistently.</p>
+
+  <h3>The Referral Engine</h3>
+  <div class="framework">
+    <div class="framework-title">Building Your Referral System</div>
+    <ol class="framework-steps">
+      <li><div class="step-num">1</div><div class="step-content"><strong>Deliver an outcome worth talking about</strong><span>The referral system starts with product excellence. Create results that make customers proud to recommend you.</span></div></li>
+      <li><div class="step-num">2</div><div class="step-content"><strong>Ask at the peak moment</strong><span>The best time to ask for a referral is immediately after a positive result or "wow" moment — not at random.</span></div></li>
+      <li><div class="step-num">3</div><div class="step-content"><strong>Make it easy</strong><span>Give customers a simple message to forward. "Know anyone who needs X? Send them this link." Remove all friction.</span></div></li>
+      <li><div class="step-num">4</div><div class="step-content"><strong>Reward the referral</strong><span>Acknowledge and reward those who refer — not just with money, but with recognition, exclusive access, or priority service.</span></div></li>
+      <li><div class="step-num">5</div><div class="step-content"><strong>Track and repeat</strong><span>Know where your referrals come from. Double down on the sources producing the most and best customers.</span></div></li>
+    </ol>
+  </div>
+
+  <div class="insight-box tip">
+    <div class="insight-icon">✅</div>
+    <p><strong>Action Step:</strong> Identify your 5 most satisfied customers right now. Reach out personally, thank them for their support, and ask: "Who do you know that might benefit from what we do?" Then make it easy for them to share.</p>
+  </div>
+</section>
+
+<!-- ══════════ CHAPTER 12 ══════════ -->
+<section class="chapter" id="ch12">
+  <div class="chapter-number">Chapter 12 · Part IV: Revenue</div>
+  <h2 class="chapter-title">The 90-Day Revenue Plan: From Reading to Results</h2>
+  <div class="chapter-intro">
+    Knowledge without implementation is stored potential. This chapter converts everything in this book into a 90-day action plan for measurable revenue growth.
+  </div>
+  <p>The businesses that grow fastest are not those with the most knowledge. They are those who apply what they know quickly, consistently, and with discipline. Use this 90-day structure to do exactly that.</p>
+
+  <h3>Your 90-Day Revenue Roadmap</h3>
+
+  <div class="framework">
+    <div class="framework-title">Month 1 — Foundation (Days 1–30)</div>
+    <ol class="framework-steps">
+      <li><div class="step-num">W1</div><div class="step-content"><strong>Clarify Your Positioning</strong><span>Write your positioning statement. Define your ideal customer. Identify your core value proposition.</span></div></li>
+      <li><div class="step-num">W2</div><div class="step-content"><strong>Build Your Trust Stack</strong><span>Collect 3–5 result-focused testimonials. Write your brand story. Create a simple risk reversal.</span></div></li>
+      <li><div class="step-num">W3</div><div class="step-content"><strong>Set Up Your Follow-Up System</strong><span>Create a 7-touch follow-up sequence. Build it into your daily sales routine.</span></div></li>
+      <li><div class="step-num">W4</div><div class="step-content"><strong>Review & Adjust Pricing</strong><span>Apply the pricing psychology principles. Test one price increase.</span></div></li>
+    </ol>
+  </div>
+
+  <div class="framework">
+    <div class="framework-title">Month 2 — Execution (Days 31–60)</div>
+    <ol class="framework-steps">
+      <li><div class="step-num">W5</div><div class="step-content"><strong>Launch Content Strategy</strong><span>Post 3x per week using the 50/20/15/15 content mix. Focus on your best platform first.</span></div></li>
+      <li><div class="step-num">W6</div><div class="step-content"><strong>Map Your Funnel</strong><span>Identify where customers drop off. Fix the biggest leak. Add a lead magnet if you don't have one.</span></div></li>
+      <li><div class="step-num">W7</div><div class="step-content"><strong>Run Market Intelligence Audit</strong><span>Spend one hour reading competitor reviews. Collect 10 exact phrases your customers use.</span></div></li>
+      <li><div class="step-num">W8</div><div class="step-content"><strong>Activate Referral System</strong><span>Contact 5 satisfied customers. Ask for referrals using the script in Chapter 11.</span></div></li>
+    </ol>
+  </div>
+
+  <div class="framework">
+    <div class="framework-title">Month 3 — Scale (Days 61–90)</div>
+    <ol class="framework-steps">
+      <li><div class="step-num">W9</div><div class="step-content"><strong>Measure & Optimise</strong><span>Review conversion rates, content performance, and sales data from months 1–2. Double down on what worked.</span></div></li>
+      <li><div class="step-num">W10</div><div class="step-content"><strong>Add a New Revenue Stream</strong><span>Upsell, bundle, or introduce a complementary product or service to existing customers.</span></div></li>
+      <li><div class="step-num">W11</div><div class="step-content"><strong>Build Your Pipeline</strong><span>Identify 20 target customers or partners. Begin outreach. Use the SOLVE framework for conversations.</span></div></li>
+      <li><div class="step-num">W12</div><div class="step-content"><strong>Plan the Next 90 Days</strong><span>Review results. Set your next quarter's revenue target. Build the next iteration of your plan.</span></div></li>
+    </ol>
+  </div>
+
+  <h3>Implementation Checklist</h3>
+  <ul class="checklist" id="impl-checklist">
+    <li onclick="toggleCheck(this)"><div class="check-box"></div><span>Positioning statement written and tested</span></li>
+    <li onclick="toggleCheck(this)"><div class="check-box"></div><span>Trust stack built (proof, authority, risk reversal)</span></li>
+    <li onclick="toggleCheck(this)"><div class="check-box"></div><span>7-touch follow-up sequence created</span></li>
+    <li onclick="toggleCheck(this)"><div class="check-box"></div><span>Pricing reviewed and adjusted</span></li>
+    <li onclick="toggleCheck(this)"><div class="check-box"></div><span>Content mix plan in place</span></li>
+    <li onclick="toggleCheck(this)"><div class="check-box"></div><span>Funnel mapped and leak identified</span></li>
+    <li onclick="toggleCheck(this)"><div class="check-box"></div><span>Market intelligence session completed</span></li>
+    <li onclick="toggleCheck(this)"><div class="check-box"></div><span>Referral system activated</span></li>
+    <li onclick="toggleCheck(this)"><div class="check-box"></div><span>Monthly review habit established</span></li>
+    <li onclick="toggleCheck(this)"><div class="check-box"></div><span>Next 90 days planned</span></li>
+  </ul>
+</section>
+
+<!-- ══════════ CONCLUSION ══════════ -->
+<section class="chapter" id="conclusion">
+  <div class="chapter-number">Conclusion</div>
+  <h2 class="chapter-title">The Edge is Not a Secret. It Is a Choice.</h2>
+  <div class="chapter-intro">
+    Every strategy in this book works. They work in Nigeria. They work in New York. They work for a side business and a corporation. Because they are built on how human beings think, feel, and decide.
+  </div>
+  <p>The question has never been whether these strategies work. The question is whether you will implement them consistently, patiently, and with the belief that your business deserves to grow.</p>
+  <p>Most people will read this book and feel inspired for 24 hours. A small number will read it and immediately begin applying one thing. Those are the people who will see results — not because they are smarter, but because they chose action over intention.</p>
+
+  <div class="pull-quote">
+    <p>"The gap between where you are and where you want to be is not talent. It is not resources. It is the distance between knowing and doing."</p>
+  </div>
+
+  <p>Start with Chapter 1's action step. Then Chapter 2's. Then Chapter 3's. By the time you have completed all twelve action steps, your business will look different — because you will think differently about it.</p>
+  <p>This is not the end of the book. This is the beginning of your revenue intelligence.</p>
+  <p>Now go build something great.</p>
+
+  <div style="margin-top: 48px; padding-top: 32px; border-top: 1px solid var(--border); text-align: center;">
+    <div style="font-family:'Playfair Display',serif; font-size:20px; color:var(--gold); margin-bottom:8px;">Mustapha Nuhu</div>
+    <div style="font-size:12px; color:var(--muted); letter-spacing:2px; text-transform:uppercase;">Author · Business Growth Strategist</div>
+  </div>
+</section>
+
+<!-- ══════════ FOOTER ══════════ -->
+<footer id="footer">
+  <div class="footer-logo">Mustapha Nuhu</div>
+  <div class="footer-tagline">Author · Business Growth Strategist</div>
+  <div class="footer-copy">© 2025 Mustapha Nuhu. All rights reserved.</div>
+</footer>
+
+</div><!-- /main -->
+
+<script>
+  // Sidebar toggle
+  function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const body = document.body;
+    const btn = document.getElementById('menu-toggle');
+    sidebar.classList.toggle('open');
+    body.classList.toggle('sidebar-open');
+    btn.textContent = sidebar.classList.contains('open') ? '✕' : '☰';
+  }
+
+  // Close sidebar on nav link click (mobile)
+  document.querySelectorAll('.nav-link').forEach(link => {
+    link.addEventListener('click', () => {
+      if (window.innerWidth < 900) {
+        document.getElementById('sidebar').classList.remove('open');
+        document.body.classList.remove('sidebar-open');
+        document.getElementById('menu-toggle').textContent = '☰';
+      }
+    });
+  });
+
+  // Progress bar
+  window.addEventListener('scroll', () => {
+    const scrollTop = window.scrollY;
+    const docHeight = document.body.scrollHeight - window.innerHeight;
+    const progress = (scrollTop / docHeight) * 100;
+    document.getElementById('progress-bar').style.width = progress + '%';
+  });
+
+  // Active nav link tracking
+  const sections = document.querySelectorAll('section[id], .chapter[id]');
+  const navLinks = document.querySelectorAll('.nav-link');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navLinks.forEach(link => link.classList.remove('active'));
+        const active = document.querySelector(`.nav-link[href="#${entry.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { threshold: 0.3 });
+
+  sections.forEach(s => observer.observe(s));
+
+  // Checklist
+  function toggleCheck(li) {
+    li.classList.toggle('done');
+    const box = li.querySelector('.check-box');
+    box.textContent = li.classList.contains('done') ? '✓' : '';
+  }
+</script>
+</body>
+</html>
